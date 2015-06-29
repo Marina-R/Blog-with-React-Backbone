@@ -18,6 +18,11 @@ module.exports = React.createClass({
 		var imageSize = {
 			height: '60px'
 		};
+		var titleStyle = {
+			textAlign: 'center',
+			fontFamily: "'Lobster', cursive",
+			fontSize: '40px'
+		};
 		if(this.state.data.generic) {
 			genericError = (<div className="alert alert-danger" role="alert">{this.state.data.generic}</div>);
 		}
@@ -27,7 +32,7 @@ module.exports = React.createClass({
 		return (
 			<div>
 				<div className='row col-sm-8 col-sm-offset-2'>
-					<h3>Express yourself in your blog post!</h3>
+					<h3 style={titleStyle}>Express yourself in your blog post!</h3>
 					{genericError}
 					<form  className='form' ref='postForm' onSubmit={this.onPost}>
 						<div className='form-group'>

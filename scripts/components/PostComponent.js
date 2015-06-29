@@ -34,7 +34,9 @@ module.exports = React.createClass({
 			boxShadow: '0 1px 3px rgba(0,0,0,.2)'
 		};
 		var imageStyle = {
-			marginLeft: '1em'
+			marginLeft: '1em',
+			maxWidth: '100%',
+			maxHeight: '100%'
 		};
 		return (
 			<div className='row'>
@@ -48,7 +50,9 @@ module.exports = React.createClass({
 					</div>
 					<div className='row col-sm-12'>
 						<div style={bodyStyle}>{this.state.post.get('body')}</div>
-						<img className='row col-sm-12' src={this.state.post.get('image')} style={imageStyle} />
+						<div className='col-sm-12 col-xs-12'>
+							<img src={this.state.post.get('image')} style={imageStyle} />
+						</div>
 					</div>
 					<div className='row col-sm-11 col-sm-offset-1'><a style={{cursor: 'pointer'}} onClick={this.allFromCategory}>{this.state.post.get('category')}</a></div>
 				</div>

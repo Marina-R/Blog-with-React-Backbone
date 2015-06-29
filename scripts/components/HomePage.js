@@ -26,7 +26,9 @@ module.exports = React.createClass({
 			paddingBottom: '2em'
 		};
 		var postStyle = {
-			margin: '1em'
+			margin: '1em',
+			maxWidth: '100%',
+			maxHeight: '100%'
 		};
 		var pagination = (
 			<nav className='col-sm-6 col-sm-offset-5'>
@@ -63,7 +65,9 @@ module.exports = React.createClass({
 						</div>
 						<div className='row col-sm-12'>
 							<p style={bodyStyle}>{postModel.get('body')}</p>
-							<img src={postModel.get('image')} className='row col-sm-12' style={postStyle} />
+							<div className='row col-sm-12'>
+								<img src={postModel.get('image')} style={postStyle} />
+							</div>
 						</div>
 						<div className='row col-sm-11 col-sm-offset-1'><a href={'#category/'+ postModel.get('category')}>{postModel.get('category')}</a></div>
 					</div>

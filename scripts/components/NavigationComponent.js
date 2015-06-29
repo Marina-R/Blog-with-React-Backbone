@@ -4,6 +4,11 @@ var parseSettings = require('../config/parse.js');
 var Backbone = require('backparse')(parseSettings);
 
 module.exports = React.createClass({
+	componentWillMount: function() {
+		this.props.user.on('change', function() {
+			this.forceUpdate();
+		}, this);
+	},
 	render: function () {
 		var links = [];
 		var userDropdown = null;

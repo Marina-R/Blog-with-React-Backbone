@@ -36631,6 +36631,11 @@ module.exports = React.createClass({
 		var imageSize = {
 			height: '60px'
 		};
+		var titleStyle = {
+			textAlign: 'center',
+			fontFamily: '\'Lobster\', cursive',
+			fontSize: '40px'
+		};
 		if (this.state.data.generic) {
 			genericError = React.createElement(
 				'div',
@@ -36649,7 +36654,7 @@ module.exports = React.createClass({
 				{ className: 'row col-sm-8 col-sm-offset-2' },
 				React.createElement(
 					'h3',
-					null,
+					{ style: titleStyle },
 					'Express yourself in your blog post!'
 				),
 				genericError,
@@ -36815,7 +36820,9 @@ module.exports = React.createClass({
 			paddingBottom: '2em'
 		};
 		var postStyle = {
-			margin: '1em'
+			margin: '1em',
+			maxWidth: '100%',
+			maxHeight: '100%'
 		};
 		var pagination = React.createElement(
 			'nav',
@@ -36911,7 +36918,11 @@ module.exports = React.createClass({
 							{ style: bodyStyle },
 							postModel.get('body')
 						),
-						React.createElement('img', { src: postModel.get('image'), className: 'row col-sm-12', style: postStyle })
+						React.createElement(
+							'div',
+							{ className: 'row col-sm-12' },
+							React.createElement('img', { src: postModel.get('image'), style: postStyle })
+						)
 					),
 					React.createElement(
 						'div',
@@ -37060,6 +37071,11 @@ var Backbone = require('backparse')(parseSettings);
 module.exports = React.createClass({
 	displayName: 'exports',
 
+	componentWillMount: function componentWillMount() {
+		this.props.user.on('change', function () {
+			this.forceUpdate();
+		}, this);
+	},
 	render: function render() {
 		var links = [];
 		var userDropdown = null;
@@ -37231,7 +37247,9 @@ module.exports = React.createClass({
 			boxShadow: '0 1px 3px rgba(0,0,0,.2)'
 		};
 		var imageStyle = {
-			marginLeft: '1em'
+			marginLeft: '1em',
+			maxWidth: '100%',
+			maxHeight: '100%'
 		};
 		return React.createElement(
 			'div',
@@ -37270,7 +37288,11 @@ module.exports = React.createClass({
 						{ style: bodyStyle },
 						this.state.post.get('body')
 					),
-					React.createElement('img', { className: 'row col-sm-12', src: this.state.post.get('image'), style: imageStyle })
+					React.createElement(
+						'div',
+						{ className: 'col-sm-12 col-xs-12' },
+						React.createElement('img', { src: this.state.post.get('image'), style: imageStyle })
+					)
 				),
 				React.createElement(
 					'div',
