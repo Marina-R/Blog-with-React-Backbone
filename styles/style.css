@@ -1,4 +1,29 @@
+@import url(http://fonts.googleapis.com/css?family=Lobster);
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans);
 .error {
 	color: red;
 	font-size: 12px;
+}
+.login-form, .post-form {
+	width: 40%;
+	margin: 0 auto;
+	position: absolute;
+	top: 25%;
+	left: 33%;
+}
+.form-btn {
+	margin-top: 10px;
+}
+body {
+	background: url(https://envoy.co/images/home/bg-security.jpg);
+}
+p {
+	color: #A5A7AA;
+}
+label, li {
+	font-family: "Droid Sans, sans-serif";
+	font-size: 15px;
+}
+li, button {
+	font-size: 20px;
 }

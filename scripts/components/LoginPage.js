@@ -1,7 +1,6 @@
 var React = require('react');
 var parseSettings = require('../config/parse.js');
 var Backbone = require('backparse')(parseSettings);
-var UserModel = require('../models/UserModel');
 var validator = require('validator');
 
 module.exports = React.createClass({
@@ -11,15 +10,28 @@ module.exports = React.createClass({
 		};
 	},
 	render: function () {
+		var titleStyle = {
+			textAlign: 'center',
+			fontFamily: "'Lobster', cursive",
+			fontSize: '45px'
+		};
+
 		return (
-			<div>
-				<form ref='loginForm' onSubmit={this.login}> 
-					<input type='text' ref='username' placeholder='Please enter your username' /><br/>
-					<div className='error' ref='usernameError'>{this.state.data.username}</div>
-					<input type='password' ref='password' placeholder='Please enter your password' /><br/>
-					<div className='error' ref='passwordError'>{this.state.data.password}</div>
-					<button type='submit' ref='loginBtn'>Log In</button>
-				</form>		
+			<div className='login-form'>
+				<h1 style={titleStyle}>Log In</h1>
+				<form  className='form' ref='loginForm' onSubmit={this.login}>
+					<div className='form-group '>
+						<label for="exampleInputEmail1">Username</label>
+						<input type="text" ref='username' className="form-control" id="exampleInputEmail1" placeholder="Plese enter your username" />
+						<div className='error' ref='usernameError'>{this.state.data.username}</div>
+					</div>
+					<div className="form-group " >
+						<label for="exampleInputPassword1">Password</label>
+						<input type="password" ref='password' className="form-control" id="exampleInputPassword1" placeholder='Please enter your password' />
+						<div className='error' ref='passwordError'>{this.state.data.password}</div>
+					</div>
+					<button type="submit" ref='loginBtn' className="btn btn-primary btn-lg btn-block form-btn">Log In</button>
+				</form>
 			</div>
 		)
 	},
@@ -49,13 +61,12 @@ module.exports = React.createClass({
 
 		this.setState({data: error});
 		
-		var user = new UserModel();
-		user.login({
+		this.props.user.login({
 			username: this.refs.username.getDOMNode().value,
 			password: this.refs.password.getDOMNode().value
 		}, {
 			success: function(userModel) {
-				app.navigate('profile', {trigger: true});
+				app.navigate('createPost', {trigger: true});
 			},
 			error: function(userModel, response) {
 				if(response.responseJSON.code == 101) {

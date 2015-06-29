@@ -23,6 +23,7 @@
   "dependencies": {
     "backbone": "^1.2.1",
     "jquery": "^2.1.4",
+    "moment": "^2.10.3",
     "react": "^0.13.3",
     "validator": "^3.40.1"
   }

@@ -7,23 +7,77 @@ var validator = require('validator');
 module.exports = React.createClass({
 	getInitialState: function() {
 		return {
-			data: {}
-		};
+			data: {},
+			avatarUrl: 'http://androidforums.com/styles/androidforumsv3/xenforo/avatars/avatar_l.png'
+		}
 	},
 	render: function () {
+		var avatarSize = {
+			height: '60px'
+		};
+		var genericError = null;
+		if(this.state.data.generic) {
+			genericError = (<div className='alert alert-danger' role='alert'>{this.state.data.generic}</div>);
+		}
+		
+		if(this.state.avatarUrl) {
+			var avatarUrl = (<img src={this.state.avatarUrl} style={avatarSize}/>);
+		}
+		var titleStyle = {
+			textAlign: 'center',
+			fontFamily: "'Lobster', cursive",
+			fontSize: '45px'
+		};
 		return (
-			<div>
-				<form ref='registerForm' onSubmit={this.register}> 
-					<input type='text' ref='username' placeholder='Please enter your username' /><br/>
-					<div  className='error' ref='usernameError'>{this.state.data.username}</div>
-					<input type='password' ref='password' placeholder='Please enter your password' /><br/>
-					<div className='error' ref='passwordError'>{this.state.data.password}</div>
-					<input type='email' ref='email' placeholder='Please enter your email' /><br/>
-					<div className='error' ref='emailError'>{this.state.data.email}</div>
-					<button type='submit' ref='loginBtn'>Register</button>
+			<div className='login-form'>
+				<h1 style={titleStyle}>Register</h1>
+				{genericError}
+				<form className='form' ref='registerForm' onSubmit={this.register}>
+					<div className='form-group '>
+						<label>Username</label>
+						<input type="text" ref='username' className="form-control" id="exampleInputEmail1" placeholder="Plese enter your username" />
+						<div className='error' ref='usernameError'>{this.state.data.username}</div>
+					</div>
+					<div className="form-group " >
+						<label>Password</label>
+						<input type="password" ref='password' className="form-control" id="exampleInputPassword1" placeholder='Please enter your password' />
+						<div className='error' ref='passwordError'>{this.state.data.password}</div>
+					</div>
+					<div className="form-group ">
+						<label>Email</label>
+						<input type="email" ref='email' className="form-control" id="exampleInputPassword1" placeholder='Please enter your email' />
+						<div className='error' ref='emailError'>{this.state.data.email}</div>
+					</div>
+					<div className="media">
+						<div className="media-left">
+							<a href="#">
+								{avatarUrl}
+							</a>
+						</div>
+						<div className="media-body">
+							<button type='button' onClick={this.uploadAvatar} className='btn btn-default'>Choose your avatar</button>
+						</div>
+					</div>
+					<div>
+						<button type="submit" className="btn btn-primary btn-lg btn-block form-btn">Sign Up</button>
+					</div>
 				</form>
 			</div>
 		)
+	},
+	uploadAvatar: function() {
+		var self = this;
+		filepicker.pickAndStore(
+			{
+				mimtype: 'image/*'
+			},
+			{},
+			function(InkBlobs) {
+				self.setState({
+					avatarUrl: InkBlobs[0].url
+				})
+			}
+		);
 	},
 	hasError: function(error) {
 		for(var i in error) {
@@ -35,38 +89,34 @@ module.exports = React.createClass({
 		e.preventDefault();
 		var self = this;
 		var app = this.props.app;
-		var username = this.refs.username.getDOMNode().value;
-		var password = this.refs.password.getDOMNode().value;
-		var email = this.refs.email.getDOMNode().value;
 		
-		var user = new UserModel({
-			username: username,
-			password: password,
-			email: email
-		});
+		var newUser = {
+			username: this.refs.username.getDOMNode().value,
+			password: this.refs.password.getDOMNode().value,
+			email: this.refs.email.getDOMNode().value,
+			avatar: this.state.avatarUrl
+		};
 
 		var error = {};
 
-		if(!user.attributes.username && !user.attributes.password && !user.attributes.email) {
+		if(!newUser.username) {
 			error.username = 'Please enter your username';
+		} else if(!newUser.password) {
 			error.password = 'Please enter your password';
-			error.email = 'Please enter your email';
-		} else if(!user.attributes.password) {
-			error.password = 'Please enter your password';
-		} else if(!validator.isLength(user.attributes.password, 6)) {
+		} else if(!validator.isLength(newUser.password, 6)) {
 			error.password = 'Password should be at least 6 characters length';
-		} else if(!user.attributes.email) {
+		} else if(!newUser.email) {
 			error.email = 'Please enter your email';
-		} else if(!validator.isEmail(user.attributes.email)) {
+		} else if(!validator.isEmail(newUser.email)) {
 			error.email = 'Email should be valid';
 		}
 
 		this.setState({data: error});
 
 		if(!this.hasError(error)) { 
-			user.save(null, {
+			this.props.user.save(newUser, {
 				success: function(userModel) {
-					app.navigate('profile', {trigger: true});
+					app.navigate('createPost', {trigger: true});
 				},
 				error: function(userModel, response) {
 					if(response.responseJSON.code == 202) {
