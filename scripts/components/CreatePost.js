@@ -14,12 +14,19 @@ module.exports = React.createClass({
 	},
 	render: function () {
 		var genericError = null;
+
+		var imageSize = {
+			height: '60px'
+		};
 		if(this.state.data.generic) {
 			genericError = (<div className="alert alert-danger" role="alert">{this.state.data.generic}</div>);
 		}
+		if(this.state.data.image) {
+			var image = (<img src={this.state.data.image} style={imageSize}/>);
+		}
 		return (
 			<div>
-				<div className='row col-sm-6 col-sm-offset-3'>
+				<div className='row col-sm-8 col-sm-offset-2'>
 					<h3>Express yourself in your blog post!</h3>
 					{genericError}
 					<form  className='form' ref='postForm' onSubmit={this.onPost}>
@@ -40,6 +47,16 @@ module.exports = React.createClass({
 						 	<option value='CSS'>CSS</option>
 						 	<option value='HTML5'>HTML5</option>
 						</select>
+						<div className="media">		
+							<div className="media-left">
+								<a href="#">
+									{image}
+								</a>
+							</div>
+							<div className="media-body">
+								<button type='button' onClick={this.addImage} className='btn btn-default'>Add image</button>
+							</div>
+						</div>
 						<button type="submit" ref='postBtn' className="btn btn-primary btn-lg btn-block form-btn">Submit</button>
 					</form>
 				</div>
@@ -56,7 +73,8 @@ module.exports = React.createClass({
 			body: this.refs.body.getDOMNode().value,
 			userId: self.props.user.attributes.username,
 			userAvatar: self.props.user.attributes.avatar,
-			category: this.refs.category.getDOMNode().value
+			category: this.refs.category.getDOMNode().value,
+			image: this.state.data.image
 		}); 
 
 		if(post.isValid()) {
@@ -68,5 +86,19 @@ module.exports = React.createClass({
 		} else {
 			this.setState({data: {generic: post.validationError}});
 		}
+	},
+	addImage: function() {
+		var self = this;
+		filepicker.pickAndStore(
+			{
+				mimtype: 'image/*'
+			},
+			{},
+			function(InkBlobs) {
+				self.setState({
+					data: {image: InkBlobs[0].url}
+				})
+			}
+		);
 	}
 });

@@ -36627,6 +36627,10 @@ module.exports = React.createClass({
 	},
 	render: function render() {
 		var genericError = null;
+
+		var imageSize = {
+			height: '60px'
+		};
 		if (this.state.data.generic) {
 			genericError = React.createElement(
 				'div',
@@ -36634,12 +36638,15 @@ module.exports = React.createClass({
 				this.state.data.generic
 			);
 		}
+		if (this.state.data.image) {
+			var image = React.createElement('img', { src: this.state.data.image, style: imageSize });
+		}
 		return React.createElement(
 			'div',
 			null,
 			React.createElement(
 				'div',
-				{ className: 'row col-sm-6 col-sm-offset-3' },
+				{ className: 'row col-sm-8 col-sm-offset-2' },
 				React.createElement(
 					'h3',
 					null,
@@ -36709,6 +36716,28 @@ module.exports = React.createClass({
 						)
 					),
 					React.createElement(
+						'div',
+						{ className: 'media' },
+						React.createElement(
+							'div',
+							{ className: 'media-left' },
+							React.createElement(
+								'a',
+								{ href: '#' },
+								image
+							)
+						),
+						React.createElement(
+							'div',
+							{ className: 'media-body' },
+							React.createElement(
+								'button',
+								{ type: 'button', onClick: this.addImage, className: 'btn btn-default' },
+								'Add image'
+							)
+						)
+					),
+					React.createElement(
 						'button',
 						{ type: 'submit', ref: 'postBtn', className: 'btn btn-primary btn-lg btn-block form-btn' },
 						'Submit'
@@ -36727,7 +36756,8 @@ module.exports = React.createClass({
 			body: this.refs.body.getDOMNode().value,
 			userId: self.props.user.attributes.username,
 			userAvatar: self.props.user.attributes.avatar,
-			category: this.refs.category.getDOMNode().value
+			category: this.refs.category.getDOMNode().value,
+			image: this.state.data.image
 		});
 
 		if (post.isValid()) {
@@ -36739,6 +36769,16 @@ module.exports = React.createClass({
 		} else {
 			this.setState({ data: { generic: post.validationError } });
 		}
+	},
+	addImage: function addImage() {
+		var self = this;
+		filepicker.pickAndStore({
+			mimtype: 'image/*'
+		}, {}, function (InkBlobs) {
+			self.setState({
+				data: { image: InkBlobs[0].url }
+			});
+		});
 	}
 });
 
@@ -36752,7 +36792,13 @@ var moment = require('moment');
 module.exports = React.createClass({
 	displayName: 'exports',
 
+	componentWillMount: function componentWillMount() {
+		this.props.posts.on('change', function () {
+			this.forceUpdate();
+		}, this);
+	},
 	render: function render() {
+		console.log(this.props.posts.models);
 		var titleStyle = {
 			textAlign: 'center',
 			fontFamily: '\'Lobster\', cursive'
@@ -36771,6 +36817,61 @@ module.exports = React.createClass({
 		var postStyle = {
 			margin: '1em'
 		};
+		var pagination = React.createElement(
+			'nav',
+			{ className: 'col-sm-6 col-sm-offset-5' },
+			React.createElement(
+				'ul',
+				{ className: 'pagination' },
+				React.createElement(
+					'li',
+					null,
+					React.createElement(
+						'a',
+						{ 'aria-label': 'Previous' },
+						React.createElement(
+							'span',
+							{ 'aria-hidden': 'true' },
+							'«'
+						)
+					)
+				),
+				React.createElement(
+					'li',
+					null,
+					React.createElement(
+						'a',
+						null,
+						'1'
+					)
+				),
+				React.createElement(
+					'li',
+					null,
+					React.createElement(
+						'a',
+						null,
+						'2'
+					)
+				),
+				React.createElement(
+					'li',
+					null,
+					React.createElement(
+						'a',
+						{ 'aria-label': 'Next' },
+						React.createElement(
+							'span',
+							{ 'aria-hidden': 'true' },
+							'»'
+						)
+					)
+				)
+			)
+		);
+		// var postsArray = this.props.posts.models;
+		// var recentPosts = postsArray.slice(0,5);
+		// console.log(recentPosts);
 
 		var postsEl = this.props.posts.map(function (postModel) {
 			return React.createElement(
@@ -36778,7 +36879,7 @@ module.exports = React.createClass({
 				{ className: 'row', style: postStyle, key: postModel.cid },
 				React.createElement(
 					'div',
-					{ style: blogStyle, className: 'col-sm-6 col-sm-offset-3' },
+					{ style: blogStyle, className: 'col-sm-8 col-sm-offset-2' },
 					React.createElement(
 						'div',
 						{ className: 'row col-sm-12' },
@@ -36809,7 +36910,8 @@ module.exports = React.createClass({
 							'p',
 							{ style: bodyStyle },
 							postModel.get('body')
-						)
+						),
+						React.createElement('img', { src: postModel.get('image'), className: 'row col-sm-12', style: postStyle })
 					),
 					React.createElement(
 						'div',
@@ -36826,7 +36928,8 @@ module.exports = React.createClass({
 		return React.createElement(
 			'div',
 			null,
-			postsEl
+			postsEl,
+			pagination
 		);
 	}
 });
@@ -36957,11 +37060,6 @@ var Backbone = require('backparse')(parseSettings);
 module.exports = React.createClass({
 	displayName: 'exports',
 
-	componentWillMount: function componentWillMount() {
-		this.props.user.on('change', function () {
-			this.forceUpdate();
-		}, this);
-	},
 	render: function render() {
 		var links = [];
 		var userDropdown = null;
@@ -36973,6 +37071,9 @@ module.exports = React.createClass({
 			backgroundRepeat: 'no-repeat',
 			float: 'right',
 			margin: '5px'
+		};
+		var navStyle = {
+			backgroundImage: 'url(https://d1wli5mq9yq9mw.cloudfront.net/static/images/bg_main.gif)'
 		};
 		var logo = {
 			backgroundRepeat: 'no-repeat',
@@ -37039,7 +37140,7 @@ module.exports = React.createClass({
 		}
 		return React.createElement(
 			'nav',
-			{ className: 'navbar navbar-default' },
+			{ className: 'navbar navbar-default', style: navStyle },
 			React.createElement(
 				'div',
 				{ className: 'container-fluid' },
@@ -37129,12 +37230,15 @@ module.exports = React.createClass({
 			paddingBottom: '2em',
 			boxShadow: '0 1px 3px rgba(0,0,0,.2)'
 		};
+		var imageStyle = {
+			marginLeft: '1em'
+		};
 		return React.createElement(
 			'div',
 			{ className: 'row' },
 			React.createElement(
 				'div',
-				{ style: blogStyle, className: 'col-sm-6 col-sm-offset-3' },
+				{ style: blogStyle, className: 'col-sm-8 col-sm-offset-2' },
 				React.createElement(
 					'div',
 					{ className: 'row col-sm-12' },
@@ -37162,10 +37266,11 @@ module.exports = React.createClass({
 					'div',
 					{ className: 'row col-sm-12' },
 					React.createElement(
-						'p',
+						'div',
 						{ style: bodyStyle },
 						this.state.post.get('body')
-					)
+					),
+					React.createElement('img', { className: 'row col-sm-12', src: this.state.post.get('image'), style: imageStyle })
 				),
 				React.createElement(
 					'div',
@@ -37425,9 +37530,8 @@ function fetchPosts(category, query, userId) {
 	}
 	posts.fetch({
 		query: q,
-
 		success: function success() {
-			React.render(React.createElement(HomePage, { posts: posts }), container);
+			React.render(React.createElement(HomePage, { user: user, posts: posts }), container);
 		}
 	});
 };
@@ -37491,7 +37595,8 @@ module.exports = Backbone.Model.extend({
 		userAvatar: '',
 		title: '',
 		body: '',
-		category: ''
+		category: '',
+		image: ''
 	},
 	parseClassName: 'Post',
 	isPost: true,

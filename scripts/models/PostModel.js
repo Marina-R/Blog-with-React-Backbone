@@ -7,7 +7,8 @@ module.exports = Backbone.Model.extend({
 		userAvatar: '',
 		title: '',
 		body: '',
-		category: ''
+		category: '',
+		image: ''
 	},
 	parseClassName: 'Post',
 	isPost: true,

@@ -4,11 +4,6 @@ var parseSettings = require('../config/parse.js');
 var Backbone = require('backparse')(parseSettings);
 
 module.exports = React.createClass({
-	componentWillMount: function() {
-		this.props.user.on('change', function() {
-			this.forceUpdate();
-		}, this);
-	},
 	render: function () {
 		var links = [];
 		var userDropdown = null;
@@ -20,6 +15,9 @@ module.exports = React.createClass({
 			backgroundRepeat: 'no-repeat',
 			float: 'right',
 			margin: '5px'
+		};
+		var navStyle = {
+			backgroundImage: 'url(https://d1wli5mq9yq9mw.cloudfront.net/static/images/bg_main.gif)',
 		};
 		var logo = {
 			backgroundRepeat: 'no-repeat',
@@ -46,7 +44,7 @@ module.exports = React.createClass({
 			);
 		}
 		return(
-			<nav className="navbar navbar-default">
+			<nav className="navbar navbar-default" style={navStyle}>
 	  			<div className="container-fluid">
 					<div className="navbar-header">
 						<a className="navbar-brand " href="#" style={logo}></a>

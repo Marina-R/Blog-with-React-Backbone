@@ -32,9 +32,8 @@ function fetchPosts(category, query, userId) {
 	}
 	posts.fetch({
 		query: q,
-
 		success: function() {
-			React.render(<HomePage posts={posts} />, container);
+			React.render(<HomePage user={user} posts={posts} />, container);
 		}
 	})
 };
